@@ -1,28 +1,30 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
-	"net"
 	"os"
 	"strings"
 )
 
 func main() {
-
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: client.exe <peerIP:port> <filePath>	")
+		fmt.Println("Usage: client.exe <address> <filepath>")
 		return
 	}
 
 	addr := os.Args[1]
 	filePath := os.Args[2]
-
 	sendFile(addr, filePath)
 }
 
 func sendFile(addr, filePath string) {
-	conn, err := net.Dial("tcp", addr)
+	config := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	conn, err := tls.Dial("tcp", addr, config)
 	if err != nil {
 		fmt.Println("Connection error:", err)
 		return
